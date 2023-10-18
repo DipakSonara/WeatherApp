@@ -10,3 +10,8 @@
 "invalid_data" = "Invalid Data";
 "no_response" = "Response Unsuccessful";
 "generic_error_message" = "Please try again !!";
+
+"weather_screen_title" = "Weather";
+"delete_button_title" = "Delete";
+"list_button_title" = "List";
+"map_button_title" = "Map";

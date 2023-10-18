@@ -6,29 +6,20 @@
 //
 
 import Foundation
-
-enum ApiError: Error {
-    case invalidURL
-    case invalidData
-    case noResponse
-    case genericError
-
-    var message: String {
-        switch self {
-        case .invalidURL: return ApiErrors.invalidURL
-        case .invalidData: return ApiErrors.invalidData
-        case .noResponse: return ApiErrors.noResponse
-        case .genericError: return ApiErrors.genericError
-        }
-    }
-}
+import Combine
+import Network
 
 protocol ApiProvider {
     // get today's weather for given city name
-    func getCurrentWeather(lat: String, lon: String, completion: @escaping (Result<TodayWeather, ApiError>) -> ())
+    func getCurrentWeather(lat: String, lon: String) -> Future<TodayWeather, Error>
 }
 
 final class ApiClient: ApiProvider {
+
+    public private(set) var hasInternet = true
+    private let networkMonitor = NWPathMonitor()
+    private let networkMonitorQueue = DispatchQueue(label: "APIClient.networkMonitor")
+    private var cancellables = Set<AnyCancellable>()
 
     enum Endpoint {
 
@@ -57,62 +48,74 @@ final class ApiClient: ApiProvider {
     }
 
     fileprivate let defaultSession: URLSession = {
-           let configuration = URLSessionConfiguration.default
-           configuration.timeoutIntervalForRequest = 60.0
-           configuration.timeoutIntervalForResource = 60.0
-           return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 60.0
+        configuration.timeoutIntervalForResource = 60.0
+        return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
     }()
 
-    private func request<T: Codable>(endpoint:Endpoint,
-                                     method:Method,
-                                     queryItems: [URLQueryItem],
-                                     completion: @escaping((Result<T,ApiError>) -> Void)) {
-
-        var urlComponents = URLComponents()
-        urlComponents.scheme = endpoint.scheme
-        urlComponents.host = Api.baseURL
-        urlComponents.path = endpoint.path
-        urlComponents.queryItems = queryItems
-
-        guard let url = urlComponents.url else {
-            completion(.failure(.invalidURL))
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
-        print(url)
-        self.call(with: request, completion: completion)
+    init(hasInternet: Bool = true) {
+        self.hasInternet = hasInternet
+        monitorNetwork()
     }
 
-    private func call<T: Codable>(with request: URLRequest,
-                                      completion: @escaping((Result<T,ApiError>) -> Void)) {
-            let dataTask = defaultSession.dataTask(with: request) { (data, response, error) in
-                guard error == nil else { completion(.failure(.invalidData)); return }
+    private func request<T: Decodable>(type: T.Type,
+                                       endpoint:Endpoint,
+                                       method:Method,
+                                       queryItems: [URLQueryItem]) -> Future<T, Error> {
 
-                guard
-                    let responseData = data,
-                    let httpResponse = response as? HTTPURLResponse,
-                    200 ..< 300 ~= httpResponse.statusCode else {
-                    completion(.failure(.invalidData))
-                    return
-                }
-                do {
-                    let jsonDecoder = JSONDecoder()
-                    let genericModel = try jsonDecoder.decode(T.self, from: responseData)
-                    completion(.success(genericModel))
-                } catch {
-                    completion(.failure(.invalidData))
-                }
+        return Future<T, Error> { [weak self] promise in
+
+            var urlComponents = URLComponents()
+            urlComponents.scheme = endpoint.scheme
+            urlComponents.host = Api.baseURL
+            urlComponents.path = endpoint.path
+            urlComponents.queryItems = queryItems
+
+            guard let self = self, let url = urlComponents.url else {
+                return promise(.failure(ApiError.invalidURL))
             }
-            dataTask.resume()
+
+            var request = URLRequest(url: url)
+            request.httpMethod = method.rawValue
+
+            self.defaultSession.dataTaskPublisher(for: url)
+                .tryMap { (data, response) -> Data in
+                    guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+                        throw ApiError.noResponse
+                    }
+                    return data
+                }
+                .decode(type: T.self, decoder: JSONDecoder())
+                .receive(on: RunLoop.main)
+                .sink(receiveCompletion: { (completion) in
+                    if case let .failure(error) = completion {
+                        switch error {
+                        case let decodingError as DecodingError:
+                            promise(.failure(decodingError))
+                        case let apiError as ApiError:
+                            promise(.failure(apiError))
+                        default:
+                            promise(.failure(ApiError.genericError))
+                        }
+                    }
+                }, receiveValue: { promise(.success($0)) })
+                .store(in: &self.cancellables)
+        }
+    }
+
+    private func monitorNetwork() {
+        networkMonitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.hasInternet = path.status == .satisfied
+            }
+        }
+        networkMonitor.start(queue: networkMonitorQueue)
     }
 }
 
 extension ApiClient {
-    func getCurrentWeather(lat: String,
-                           lon: String,
-                           completion: @escaping (Result<TodayWeather, ApiError>) -> ()) {
+    func getCurrentWeather(lat: String, lon: String) -> Future<TodayWeather, Error> {
         var accessKeyQueryItem: URLQueryItem {
             return URLQueryItem(name: Api.accessKey,
                                 value: Api.accessValue)
@@ -132,17 +135,31 @@ extension ApiClient {
             return URLQueryItem(name: Api.unitsKey,
                                 value: Api.unitsValue)
         }
-        request(endpoint: .today,
+        return request(type: TodayWeather.self,
+                endpoint: .today,
                 method: .GET,
                 queryItems: [latitudeQueryItem,
                              longitudeQueryItem,
                              accessKeyQueryItem,
-                             unitsQueryItem],
-                completion: completion)
+                             unitsQueryItem])
     }
-
-//    func getListOfCurrencies(completion: @escaping (Result<CurrencyListModel, ApiError>) -> ()) {
-//        request(endpoint: .list, method: .GET, completion: completion)
-//    }
 }
 
+
+enum ApiError: Error {
+    case invalidURL
+    case invalidData
+    case noResponse
+    case genericError
+}
+
+extension ApiError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL: return ApiErrors.invalidURL
+        case .invalidData: return ApiErrors.invalidData
+        case .noResponse: return ApiErrors.noResponse
+        case .genericError: return ApiErrors.genericError
+        }
+    }
+}
