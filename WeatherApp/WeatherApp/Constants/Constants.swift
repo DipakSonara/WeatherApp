@@ -8,7 +8,7 @@
 import Foundation
 
 struct ViewControllerNames {
-    static let weather = "Weather"
+    static let weather = "weather_screen_title".localized
 }
 
 struct Api {
@@ -29,3 +29,8 @@ struct ApiErrors {
     static let noOfflineData = "no_offline_data".localized
 }
 
+struct WeatherScreen {
+    static let deleteButtonTitle = "delete_button_title".localized
+    static let listButtonTitle = "list_button_title".localized
+    static let mapButtonTitle = "map_button_title".localized
+}
