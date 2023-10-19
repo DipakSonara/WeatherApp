@@ -10,6 +10,8 @@
 		7383EA972ADFDA0F00730DB7 /* CityScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7383EA962ADFDA0F00730DB7 /* CityScreenView.swift */; };
 		7383EA9A2ADFDCD400730DB7 /* CityScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7383EA992ADFDCD400730DB7 /* CityScreenViewModel.swift */; };
 		7383EA9C2AE0075000730DB7 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7383EA9B2AE0075000730DB7 /* DetailView.swift */; };
+		7383EA9F2AE0E51700730DB7 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7383EA9E2AE0E51700730DB7 /* WebView.swift */; };
+		7383EAA12AE0EF8600730DB7 /* HowToUse.html in Resources */ = {isa = PBXBuildFile; fileRef = 7383EAA02AE0EF8600730DB7 /* HowToUse.html */; };
 		73A48CFC2ADD9B9D0065F7D7 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A48CFB2ADD9B9D0065F7D7 /* ApiClient.swift */; };
 		73A48CFF2ADD9C480065F7D7 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A48CFE2ADD9C480065F7D7 /* Constants.swift */; };
 		73A48D022ADDA2C20065F7D7 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A48D012ADDA2C20065F7D7 /* StringExtension.swift */; };
@@ -51,6 +53,8 @@
 		7383EA962ADFDA0F00730DB7 /* CityScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityScreenView.swift; sourceTree = "<group>"; };
 		7383EA992ADFDCD400730DB7 /* CityScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityScreenViewModel.swift; sourceTree = "<group>"; };
 		7383EA9B2AE0075000730DB7 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		7383EA9E2AE0E51700730DB7 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		7383EAA02AE0EF8600730DB7 /* HowToUse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = HowToUse.html; sourceTree = "<group>"; };
 		73A48CFB2ADD9B9D0065F7D7 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClient.swift; sourceTree = "<group>"; };
 		73A48CFE2ADD9C480065F7D7 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		73A48D012ADDA2C20065F7D7 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
@@ -126,6 +130,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		7383EA9D2AE0E50600730DB7 /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				7383EA9E2AE0E51700730DB7 /* WebView.swift */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
 		73A48CFA2ADD9B8C0065F7D7 /* ApiClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,6 +178,7 @@
 			children = (
 				73A48D0C2ADE3EDD0065F7D7 /* Home */,
 				7383EA932ADFD9D300730DB7 /* City */,
+				7383EA9D2AE0E50600730DB7 /* Help */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -238,6 +251,7 @@
 				73D28EA22ADD4FC300851F88 /* WeatherAppApp.swift */,
 				73D28EA62ADD4FCB00851F88 /* Assets.xcassets */,
 				73D28EA82ADD4FCB00851F88 /* Preview Content */,
+				7383EAA02AE0EF8600730DB7 /* HowToUse.html */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -377,6 +391,7 @@
 			files = (
 				73D28EAA2ADD4FCB00851F88 /* Preview Assets.xcassets in Resources */,
 				73A48D052ADDA5190065F7D7 /* Localizable.strings in Resources */,
+				7383EAA12AE0EF8600730DB7 /* HowToUse.html in Resources */,
 				73D28EA72ADD4FCB00851F88 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +430,7 @@
 				73A48D232ADEE84A0065F7D7 /* LocationManager.swift in Sources */,
 				73A48D0A2ADE29820065F7D7 /* TodayWeather.swift in Sources */,
 				73A48D1C2ADEBE830065F7D7 /* CardView.swift in Sources */,
+				7383EA9F2AE0E51700730DB7 /* WebView.swift in Sources */,
 				7383EA9C2AE0075000730DB7 /* DetailView.swift in Sources */,
 				73A48CFF2ADD9C480065F7D7 /* Constants.swift in Sources */,
 			);

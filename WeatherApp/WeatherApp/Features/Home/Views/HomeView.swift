@@ -15,6 +15,7 @@ struct HomeView: View {
     @StateObject private var searchViewModel = SearchResultsViewModel()
     @State private var search = ""
     @State private var showMap = false
+    @State private var isPresentWebView = false
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(
                                                                 latitude: LocationManager.shared.location?.coordinate.latitude ?? 0.0,
                                                                 longitude: LocationManager.shared.location?.coordinate.longitude ?? 0.0),
@@ -65,8 +66,22 @@ struct HomeView: View {
                     }
                     .navigationTitle(ViewControllerNames.weather)
                     .toolbar {
-                        Button(WeatherScreen.mapButtonTitle) {
-                            showMap = true
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(WeatherScreen.helpButtonTitle) {
+                                isPresentWebView = true
+                            }.sheet(isPresented: $isPresentWebView) {
+                                NavigationStack {
+                                    WebView(url: Bundle.main.url(forResource: "HowToUse", withExtension: "html")!)
+                                        .ignoresSafeArea()
+                                        .navigationTitle(WeatherScreen.howToUseTitle)
+                                        .navigationBarTitleDisplayMode(.inline)
+                                }
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(WeatherScreen.mapButtonTitle) {
+                                showMap = true
+                            }
                         }
                     }
                 }
