@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import CoreLocation
 
-class HomeViewModel: ObservableObject {
+final class HomeViewModel: ObservableObject {
 
     private let api = ApiClient()
     private var cancellables = Set<AnyCancellable>()
