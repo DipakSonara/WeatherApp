@@ -22,3 +22,6 @@
 "max_temp_title" = "Max Temp";
 "feels_like_title" = "Feels Like";
 "pressure_title" = "Pressure";
+
+"help_button_title" = "Help";
+"how_to_use_app_title" = "How To Use App";

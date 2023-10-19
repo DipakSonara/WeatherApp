@@ -33,6 +33,8 @@ struct WeatherScreen {
     static let deleteButtonTitle = "delete_button_title".localized
     static let listButtonTitle = "list_button_title".localized
     static let mapButtonTitle = "map_button_title".localized
+    static let helpButtonTitle = "help_button_title".localized
+    static let howToUseTitle = "how_to_use_app_title".localized
 }
 
 struct CityScreen {
