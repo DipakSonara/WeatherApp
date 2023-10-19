@@ -15,3 +15,10 @@
 "delete_button_title" = "Delete";
 "list_button_title" = "List";
 "map_button_title" = "Map";
+
+"humidity_title" = "Humidity";
+"wind_speed_title" = "Wind Speed";
+"min_temp_title" = "Min Temp";
+"max_temp_title" = "Max Temp";
+"feels_like_title" = "Feels Like";
+"pressure_title" = "Pressure";

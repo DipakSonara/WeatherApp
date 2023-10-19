@@ -10,14 +10,17 @@ import SwiftUI
 
 struct CardView: View {
     let weather: TodayWeather
+
     var body: some View {
         HStack(alignment: .center) {
-            VStack {
+            VStack(alignment: .leading) {
                 Text("\(weather.name)")
-                    .font(.title)
+                    .font(.headline)
                 Spacer()
-                Text("\(weather.type)")
-                    .font(.caption)
+                if let weatherDetail = weather.weatherDetail.first {
+                    Text(weatherDetail.weatherType)
+                        .font(.subheadline)
+                }
             }
             Spacer()
             VStack {
@@ -28,7 +31,6 @@ struct CardView: View {
                     .font(.headline)
             }
         }
-        .padding()
         .foregroundColor(.yellow)
         .frame(height: 100.0)
     }

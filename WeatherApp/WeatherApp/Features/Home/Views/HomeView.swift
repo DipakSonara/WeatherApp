@@ -33,39 +33,43 @@ struct HomeView: View {
                         showMap = false
                     }
                 }
+                .edgesIgnoringSafeArea(.all)
             } else {
-                List {
-                    if searchViewModel.searchText.count != 0 {
-                        ForEach(searchViewModel.places, id: \.self) { place in
-                            Text(place.name)
-                                .onTapGesture {
-                                    viewModel.getCurrentWeatherFrom(lat: place.latitude, lon: place.longitude)
-                                    searchViewModel.searchText = ""
+                    List {
+                        if searchViewModel.searchText.count != 0 {
+                            ForEach(searchViewModel.places, id: \.self) { place in
+                                Text(place.name)
+                                    .onTapGesture {
+                                        viewModel.getCurrentWeatherFrom(lat: place.latitude, lon: place.longitude)
+                                        searchViewModel.searchText = ""
+                                    }
+                            }
+                        } else {
+                            ForEach(viewModel.currentWeatherData, id: \.id) { weatherData in
+                                NavigationLink {
+                                    CityScreenView(viewModel: CityScreenViewModel(todayWeatherObject: weatherData))
+                                } label: {
+                                    CardView(weather: weatherData)
                                 }
+                            }
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive, action: { viewModel.currentWeatherData.remove(at: 0) } ) {
+                                    Label(WeatherScreen.deleteButtonTitle, systemImage: "trash")
+                                  }
+                            }
                         }
-                    } else {
-                        ForEach(viewModel.currentWeatherData, id: \.self) { weatherData in
-                            CardView(weather: weatherData)
-                        }
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive, action: { viewModel.currentWeatherData.remove(at: 0) } ) {
-                                Label(WeatherScreen.deleteButtonTitle, systemImage: "trash")
-                              }
+                    }
+                    .searchable(text: $searchViewModel.searchText)
+                    .onAppear {
+                        //viewModel.currentWeatherData = viewModel.getSavedWeatherData()
+                    }
+                    .navigationTitle(ViewControllerNames.weather)
+                    .toolbar {
+                        Button(WeatherScreen.mapButtonTitle) {
+                            showMap = true
                         }
                     }
                 }
-                .searchable(text: $searchViewModel.searchText)
-                .onAppear {
-                    //viewModel.currentWeatherData = viewModel.getSavedWeatherData()
-                }
-                .navigationTitle(ViewControllerNames.weather)
-                .toolbar {
-                    Button(WeatherScreen.mapButtonTitle) {
-                        showMap = true
-                    }
-                }
-            }
-
         }
 
     }

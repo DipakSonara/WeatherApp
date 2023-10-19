@@ -34,3 +34,12 @@ struct WeatherScreen {
     static let listButtonTitle = "list_button_title".localized
     static let mapButtonTitle = "map_button_title".localized
 }
+
+struct CityScreen {
+    static let humidityTitle = "humidity_title".localized
+    static let windSpeedTitle = "wind_speed_title".localized
+    static let minTempTitle = "min_temp_title".localized
+    static let maxTempTitle = "max_temp_title".localized
+    static let feelsLikeTitle = "feels_like_title".localized
+    static let pressureTitle = "pressure_title".localized
+}
