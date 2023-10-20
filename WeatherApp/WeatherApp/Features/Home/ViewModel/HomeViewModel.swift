@@ -15,9 +15,9 @@ final class HomeViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     @Published var currentWeatherData: [TodayWeather] = []
 
-    func getCurrentWeatherFrom(lat: String, lon: String) {
+    func getCurrentWeatherFrom(lat: Double, lon: Double) {
         var weatherData = getSavedWeatherData()
-        self.api.getCurrentWeather(lat: lat, lon: lon)
+        self.api.getWeather(forEndPoint: .today, lat: lat, lon: lon, type: TodayWeather.self)
             .sink { completion in
                 switch completion {
                 case .failure(let err):
@@ -32,7 +32,7 @@ final class HomeViewModel: ObservableObject {
                 self?.saveWeatherData(weatherData: weatherData)
             }
             .store(in: &self.cancellables)
-            }
+    }
 
     func getSavedWeatherData() -> [TodayWeather] {
         if let objects = UserDefaults.standard.object(forKey: "WeatherData") as? Data {

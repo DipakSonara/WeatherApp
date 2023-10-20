@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CityScreenView: View {
     @StateObject var viewModel: CityScreenViewModel
-
+    @State private var isPresentForecast = false
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: self.viewModel.loadBackgroundImage ? [Color(#colorLiteral(red: 0.09411764706, green: 0.4196078431, blue: 0.8431372549, alpha: 1)), Color(#colorLiteral(red: 0.5441120482, green: 0.5205187814, blue: 0.9921568627, alpha: 1))] : [Color(#colorLiteral(red: 0.1019607843, green: 0.168627451, blue: 0.262745098, alpha: 1)), Color(#colorLiteral(red: 0.3647058824, green: 0.5058823529, blue: 0.6549019608, alpha: 1))]), startPoint: .bottom, endPoint: .top)
@@ -83,6 +83,12 @@ struct CityScreenView: View {
                             Divider().frame(height: 50).background(Color.white)
                             DetailView(icon: "rectangle.compress.vertical", title: CityScreen.pressureTitle, data: "\(self.viewModel.todayWeatherObject.pressure)", unit: "hPa")
                         }
+
+                        Button(Forecast.get5daysForecastTitle) {
+                            isPresentForecast = true
+                        }.sheet(isPresented: $isPresentForecast) {
+                            ForecastWeather(lat: self.viewModel.todayWeatherObject.lat, lon: self.viewModel.todayWeatherObject.lon)
+                        }.foregroundColor(.white)
                     }
                     .padding(.vertical, 30)
                     .background(Color.secondary.opacity(0.30))

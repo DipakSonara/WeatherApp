@@ -16,23 +16,26 @@ struct CardView: View {
             VStack(alignment: .leading) {
                 Text("\(weather.name)")
                     .font(.headline)
+                    .foregroundColor(Color.primary)
                 Spacer()
                 if let weatherDetail = weather.weatherDetail.first {
                     Text(weatherDetail.weatherType)
                         .font(.subheadline)
+                        .foregroundColor(Color.secondary)
                 }
             }
             Spacer()
             VStack {
                 Text("\(Int(weather.current))℃")
                     .font(.title)
+                    .foregroundColor(Color.primary)
                 Spacer()
                 Text("H:\(Int(weather.high))℃  L:\(Int(weather.low))℃")
                     .font(.headline)
+                    .foregroundColor(Color.secondary)
             }
         }
-        .foregroundColor(.yellow)
-        .frame(height: 100.0)
+        .frame(height: 70.0)
     }
 }
 

@@ -45,3 +45,8 @@ struct CityScreen {
     static let feelsLikeTitle = "feels_like_title".localized
     static let pressureTitle = "pressure_title".localized
 }
+
+struct Forecast {
+    static let next5daysTitle = "next_5_days_title".localized
+    static let get5daysForecastTitle = "get_5_days_forecast_title".localized
+}
