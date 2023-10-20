@@ -87,11 +87,13 @@ extension TodayWeather: Codable {
 }
 
 struct WeatherDetail {
+    let id: Int
     let weatherType: String
     let weatherDescription: String
     let weatherIcon: String
 
     enum WeatherKeys: String, CodingKey {
+        case id
         case weatherType = "main"
         case weatherDescription = "description"
         case weatherIcon = "icon"
@@ -101,6 +103,7 @@ struct WeatherDetail {
 extension WeatherDetail: Codable {
     init(from decoder: Decoder) throws {
         let weatherContainer = try decoder.container(keyedBy: WeatherKeys.self)
+        id = try weatherContainer.decode(Int.self, forKey: .id)
         weatherType = try weatherContainer.decode(String.self, forKey: .weatherType)
         weatherDescription = try weatherContainer.decode(String.self, forKey: .weatherDescription)
         weatherIcon = try weatherContainer.decode(String.self, forKey: .weatherIcon)
@@ -111,9 +114,10 @@ extension TodayWeather {
     static let sampleData: [TodayWeather] =
     [
         TodayWeather(name: "Ahmedabad",
-                     weatherDetail: [WeatherDetail(weatherType: "Clouds",
-                                                  weatherDescription: "overcast clouds",
-                                                  weatherIcon: "04d")],
+                     weatherDetail: [WeatherDetail(id: 804,
+                                                   weatherType: "Clouds",
+                                                   weatherDescription: "overcast clouds",
+                                                   weatherIcon: "04d")],
                      current: 25.61,
                      high: 25.61,
                      low: 25.61,

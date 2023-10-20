@@ -60,12 +60,12 @@ struct PlaceModel: Identifiable, Hashable {
         mapItem.name ?? ""
     }
 
-    var latitude: String {
-        "\(mapItem.placemark.coordinate.latitude)"
+    var latitude: Double {
+        mapItem.placemark.coordinate.latitude
     }
 
-    var longitude: String {
-        "\(mapItem.placemark.coordinate.longitude)"
+    var longitude: Double {
+        mapItem.placemark.coordinate.longitude
     }
 
 }

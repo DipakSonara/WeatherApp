@@ -10,8 +10,27 @@ import Combine
 import Network
 
 protocol ApiProvider {
-    // get today's weather for given city name
-    func getCurrentWeather(lat: String, lon: String) -> Future<TodayWeather, Error>
+    // get today's/five days weather for given city name
+    func getWeather<T:Codable>(forEndPoint: Endpoint, lat: Double, lon: Double, type:T.Type) -> Future<T, Error>
+}
+
+enum Endpoint {
+
+    case today
+    case weekly
+
+    var path: String {
+        switch self {
+        case .today:
+            return "/data/2.5/weather"
+        case .weekly:
+            return "/data/2.5/forecast"
+        }
+    }
+
+    var scheme: String {
+        return "http"
+    }
 }
 
 final class ApiClient: ApiProvider {
@@ -21,24 +40,7 @@ final class ApiClient: ApiProvider {
     private let networkMonitorQueue = DispatchQueue(label: "APIClient.networkMonitor")
     private var cancellables = Set<AnyCancellable>()
 
-    enum Endpoint {
 
-        case today
-        case weekly(coordinates: String)
-
-        var path: String {
-            switch self {
-            case .today:
-                return "/data/2.5/weather"
-            case .weekly(let coordinates):
-                return "/data/2.5/forecast?\(coordinates)"
-            }
-        }
-
-        var scheme: String {
-            return "http"
-        }
-    }
 
     private enum Method: String {
         case GET
@@ -115,7 +117,7 @@ final class ApiClient: ApiProvider {
 }
 
 extension ApiClient {
-    func getCurrentWeather(lat: String, lon: String) -> Future<TodayWeather, Error> {
+    func getWeather<T:Codable>(forEndPoint: Endpoint, lat: Double, lon: Double, type:T.Type) -> Future<T, Error> {
         var accessKeyQueryItem: URLQueryItem {
             return URLQueryItem(name: Api.accessKey,
                                 value: Api.accessValue)
@@ -123,20 +125,20 @@ extension ApiClient {
 
         var latitudeQueryItem: URLQueryItem {
             return URLQueryItem(name: Api.latitudeKey,
-                                value: lat)
+                                value: "\(lat)")
         }
 
         var longitudeQueryItem: URLQueryItem {
             return URLQueryItem(name: Api.longitudeKey,
-                                value: lon)
+                                value: "\(lon)")
         }
 
         var unitsQueryItem: URLQueryItem {
             return URLQueryItem(name: Api.unitsKey,
                                 value: Api.unitsValue)
         }
-        return request(type: TodayWeather.self,
-                endpoint: .today,
+        return request(type: type,
+                endpoint: forEndPoint,
                 method: .GET,
                 queryItems: [latitudeQueryItem,
                              longitudeQueryItem,
