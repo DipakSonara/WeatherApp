@@ -53,7 +53,7 @@ struct WeatherForecast: Codable {
 
 /// 'clouds' object inside the 'list' object in forecast model.
 struct Clouds: Codable {
-    var clouds: Int?
+    var all: Int?
 }
 
 

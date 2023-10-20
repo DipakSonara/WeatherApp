@@ -67,27 +67,27 @@ struct CityScreenView: View {
                     /// Grid view of other weather details.
                     VStack(spacing: 47) {
                         HStack(spacing: 5) {
-                            DetailView(icon: "thermometer.sun", title: CityScreen.humidityTitle, data: "\(self.viewModel.todayWeatherObject.current)", unit: "%")
+                            DetailView(icon: "thermometer.sun", title: CityScreen.humidityTitle, data: "\(self.viewModel.todayWeatherObject.main.temp)", unit: "%")
                             Spacer()
-                            DetailView(icon: "tornado", title: CityScreen.windSpeedTitle, data: "\(self.viewModel.todayWeatherObject.windSpeed)", unit: "Km/hr")
+                            DetailView(icon: "tornado", title: CityScreen.windSpeedTitle, data: "\(self.viewModel.todayWeatherObject.wind.speed)", unit: "Km/hr")
                         }
 
                         HStack(spacing: 5) {
-                            DetailView(icon: "arrow.down.circle", title: CityScreen.minTempTitle, data: "\(self.viewModel.todayWeatherObject.low)", unit: "°C")
+                            DetailView(icon: "arrow.down.circle", title: CityScreen.minTempTitle, data: "\(self.viewModel.todayWeatherObject.main.tempMin)", unit: "°C")
                             Divider().frame(height: 50).background(Color.white)
-                            DetailView(icon: "arrow.up.circle", title: CityScreen.maxTempTitle, data: "\(self.viewModel.todayWeatherObject.high)", unit: "°C")
+                            DetailView(icon: "arrow.up.circle", title: CityScreen.maxTempTitle, data: "\(self.viewModel.todayWeatherObject.main.tempMax)", unit: "°C")
                         }
 
                         HStack(spacing: 5) {
-                            DetailView(icon: "heart", title: CityScreen.feelsLikeTitle, data: "\(self.viewModel.todayWeatherObject.feelsLike)", unit: "°C")
+                            DetailView(icon: "heart", title: CityScreen.feelsLikeTitle, data: "\(self.viewModel.todayWeatherObject.main.feelsLike)", unit: "°C")
                             Divider().frame(height: 50).background(Color.white)
-                            DetailView(icon: "rectangle.compress.vertical", title: CityScreen.pressureTitle, data: "\(self.viewModel.todayWeatherObject.pressure)", unit: "hPa")
+                            DetailView(icon: "rectangle.compress.vertical", title: CityScreen.pressureTitle, data: "\(self.viewModel.todayWeatherObject.main.pressure)", unit: "hPa")
                         }
 
                         Button(Forecast.get5daysForecastTitle) {
                             isPresentForecast = true
                         }.sheet(isPresented: $isPresentForecast) {
-                            ForecastWeather(lat: self.viewModel.todayWeatherObject.lat, lon: self.viewModel.todayWeatherObject.lon)
+                            ForecastWeather(lat: self.viewModel.todayWeatherObject.coord.lat, lon: self.viewModel.todayWeatherObject.coord.lon)
                         }.foregroundColor(.white)
                     }
                     .padding(.vertical, 30)
