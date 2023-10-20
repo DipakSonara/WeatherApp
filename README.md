@@ -8,7 +8,7 @@ For this assignment you will be using the API from: http://openweathermap.org/ap
 
 ### Requirements : Xcode 14.x
 
-iOS minimum version : iOS 15.0
+iOS minimum version : iOS 16.0
 
 Device Support : All iPhones/iPads/iPods running iOS 15.x and higher
 
