@@ -17,7 +17,7 @@ final class CityScreenViewModel: ObservableObject {
 
     /// Determine the background image to be loaded based on whether it's night or day time.
     var loadBackgroundImage: Bool {
-        if self.todayWeatherObject.timeStamp >= self.todayWeatherObject.sunset {
+        if self.todayWeatherObject.dt >= self.todayWeatherObject.sys.sunset {
             return false
         } else {
             return true
@@ -26,8 +26,8 @@ final class CityScreenViewModel: ObservableObject {
 
     /// Get the weather condition icon.
     var weatherIcon: String {
-        let weatherDetail = self.todayWeatherObject.weatherDetail[0]
-        switch weatherDetail.weatherIcon {
+        let weatherDetail = self.todayWeatherObject.weather[0]
+        switch weatherDetail.icon {
             case "01d":
                 return "clear_sky_day"
             case "01n":
@@ -72,36 +72,36 @@ final class CityScreenViewModel: ObservableObject {
 
     /// Get the date returned by the API
     var date: String {
-        return self.dateFormatter(timeStamp: self.todayWeatherObject.timeStamp)
+        return self.dateFormatter(timeStamp: self.todayWeatherObject.dt)
     }
 
     /// Get the temperature
     var temperature: String {
-        return String(format: "%.1f", self.todayWeatherObject.current)
+        return String(format: "%.1f", self.todayWeatherObject.main.temp)
     }
 
     /// Get the min temp.
     var tempMin: String {
-        return String(format: "%.1f", self.todayWeatherObject.low)
+        return String(format: "%.1f", self.todayWeatherObject.main.tempMin)
     }
 
     /// Get the max temp
     var tempMax: String {
-        return String(format: "%.1f", self.todayWeatherObject.high)
+        return String(format: "%.1f", self.todayWeatherObject.main.tempMax)
     }
 
     /// Get the sunrise date
     var sunrise: String {
-        return self.getTime(timeStamp: self.todayWeatherObject.sunrise)
+        return self.getTime(timeStamp: self.todayWeatherObject.sys.sunrise)
     }
 
     /// Get the sunset date
     var sunset: String {
-        return self.getTime(timeStamp: self.todayWeatherObject.sunset)
+        return self.getTime(timeStamp: self.todayWeatherObject.sys.sunset)
     }
 
     var weatherType: String {
-        return self.todayWeatherObject.weatherDetail[0].weatherType
+        return self.todayWeatherObject.weather[0].main
     }
 
     /// The the current time in 12-hour format with the right timezone (e.g. 5:52 AM)

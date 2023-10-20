@@ -25,7 +25,7 @@ struct HomeView: View {
         NavigationView {
             if showMap {
                 Map(coordinateRegion: $region, annotationItems: viewModel.currentWeatherData) {
-                    MapMarker(coordinate: CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon))
+                    MapMarker(coordinate: CLLocationCoordinate2D(latitude: $0.coord.lat, longitude: $0.coord.lon))
                         
                 }
                 .navigationTitle(ViewControllerNames.weather)
@@ -50,7 +50,7 @@ struct HomeView: View {
                                 NavigationLink {
                                     CityScreenView(viewModel: CityScreenViewModel(todayWeatherObject: weatherData))
                                 } label: {
-                                    CardView(weather: weatherData)
+                                    CardView(todayWeather: weatherData)
                                 }
                             }
                             .swipeActions(edge: .trailing) {
@@ -62,7 +62,7 @@ struct HomeView: View {
                     }
                     .searchable(text: $searchViewModel.searchText)
                     .onAppear {
-                        //viewModel.currentWeatherData = viewModel.getSavedWeatherData()
+                        viewModel.currentWeatherData = viewModel.getSavedWeatherData()
                     }
                     .navigationTitle(ViewControllerNames.weather)
                     .toolbar {

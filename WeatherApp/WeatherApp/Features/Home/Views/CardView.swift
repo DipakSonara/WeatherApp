@@ -9,28 +9,28 @@ import Foundation
 import SwiftUI
 
 struct CardView: View {
-    let weather: TodayWeather
+    let todayWeather: TodayWeather
 
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                Text("\(weather.name)")
+                Text("\(todayWeather.name)")
                     .font(.headline)
                     .foregroundColor(Color.primary)
                 Spacer()
-                if let weatherDetail = weather.weatherDetail.first {
-                    Text(weatherDetail.weatherType)
+                if let weatherDetail = todayWeather.weather.first {
+                    Text(weatherDetail.main)
                         .font(.subheadline)
                         .foregroundColor(Color.secondary)
                 }
             }
             Spacer()
             VStack {
-                Text("\(Int(weather.current))℃")
+                Text("\(Int(todayWeather.main.temp))℃")
                     .font(.title)
                     .foregroundColor(Color.primary)
                 Spacer()
-                Text("H:\(Int(weather.high))℃  L:\(Int(weather.low))℃")
+                Text("H:\(Int(todayWeather.main.tempMax))℃  L:\(Int(todayWeather.main.tempMin))℃")
                     .font(.headline)
                     .foregroundColor(Color.secondary)
             }
@@ -42,7 +42,7 @@ struct CardView: View {
 struct CardView_Previews: PreviewProvider {
     static var weather = TodayWeather.sampleData[0]
     static var previews: some View {
-        CardView(weather: weather)
+        CardView(todayWeather: weather)
             .background(.red)
             .previewLayout(.fixed(width: 400, height: 60))
     }
