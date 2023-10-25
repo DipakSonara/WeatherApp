@@ -11,27 +11,27 @@ import Network
 
 protocol ApiProvider {
     // get today's/five days weather for given city name
-    func getWeather<T:Codable>(forEndPoint: Endpoint, lat: Double, lon: Double, type:T.Type) -> Future<T, Error>
+    func getTodayWeather<T:Codable>(weatherRequest: WeatherRequest) -> Future<T, Error>
 }
 
-enum Endpoint {
-
-    case today
-    case weekly
-
-    var path: String {
-        switch self {
-        case .today:
-            return "/data/2.5/weather"
-        case .weekly:
-            return "/data/2.5/forecast"
-        }
-    }
-
-    var scheme: String {
-        return "http"
-    }
-}
+//enum Endpoint {
+//
+//    case today
+//    case weekly
+//
+//    var path: String {
+//        switch self {
+//        case .today(let _):
+//            return "/data/2.5/weather"
+//        case .weekly(let _):
+//            return "/data/2.5/forecast"
+//        }
+//    }
+//
+//    var scheme: String {
+//        return "http"
+//    }
+//}
 
 final class ApiClient: ApiProvider {
 
@@ -40,13 +40,51 @@ final class ApiClient: ApiProvider {
     private let networkMonitorQueue = DispatchQueue(label: "APIClient.networkMonitor")
     private var cancellables = Set<AnyCancellable>()
 
+    private enum Endpoint: EndpointConfiguration {
+        var method: Method {
+            switch self {
+            case .today, .weekly: return .GET
+            }
+        }
 
+        case today(requestObject: WeatherRequest)
+        case weekly(requestObject: WeatherRequest)
 
-    private enum Method: String {
-        case GET
-        case PUT
-        case POST
-        case DELETE
+        var path: String {
+            switch self {
+            case .today: return "/data/2.5/weather"
+            case .weekly: return "/data/2.5/forecast"
+            }
+        }
+
+        var scheme: String {
+            return "http"
+        }
+
+        var queryParameters: [URLQueryItem]? {
+            switch self {
+            case .today(let requestObject), .weekly(let requestObject):
+                return [
+                    URLQueryItem(
+                        name: Api.accessKey,
+                        value: Api.accessValue
+                    ),
+                    URLQueryItem(
+                        name: Api.latitudeKey,
+                        value: "\(requestObject.latitude)"
+                    ),
+                    URLQueryItem(
+                        name: Api.longitudeKey,
+                        value: "\(requestObject.longitude)"
+                    ),
+                    URLQueryItem(
+                        name: Api.unitsKey,
+                        value: "\(requestObject.unit)"
+                    )
+                ]
+            }
+        }
+        var body: Encodable? { nil}
     }
 
     fileprivate let defaultSession: URLSession = {
@@ -62,24 +100,22 @@ final class ApiClient: ApiProvider {
     }
 
     private func request<T: Decodable>(type: T.Type,
-                                       endpoint:Endpoint,
-                                       method:Method,
-                                       queryItems: [URLQueryItem]) -> Future<T, Error> {
+                                       endPointConfiguration: EndpointConfiguration) -> Future<T, Error> {
 
         return Future<T, Error> { [weak self] promise in
 
             var urlComponents = URLComponents()
-            urlComponents.scheme = endpoint.scheme
+            urlComponents.scheme = endPointConfiguration.scheme
             urlComponents.host = Api.baseURL
-            urlComponents.path = endpoint.path
-            urlComponents.queryItems = queryItems
+            urlComponents.path = endPointConfiguration.path
+            urlComponents.queryItems = endPointConfiguration.queryParameters
 
             guard let self = self, let url = urlComponents.url else {
                 return promise(.failure(ApiError.invalidURL))
             }
 
             var request = URLRequest(url: url)
-            request.httpMethod = method.rawValue
+            request.httpMethod = endPointConfiguration.method.rawValue
 
             self.defaultSession.dataTaskPublisher(for: url)
                 .tryMap { (data, response) -> Data in
@@ -117,33 +153,9 @@ final class ApiClient: ApiProvider {
 }
 
 extension ApiClient {
-    func getWeather<T:Codable>(forEndPoint: Endpoint, lat: Double, lon: Double, type:T.Type) -> Future<T, Error> {
-        var accessKeyQueryItem: URLQueryItem {
-            return URLQueryItem(name: Api.accessKey,
-                                value: Api.accessValue)
-        }
-
-        var latitudeQueryItem: URLQueryItem {
-            return URLQueryItem(name: Api.latitudeKey,
-                                value: "\(lat)")
-        }
-
-        var longitudeQueryItem: URLQueryItem {
-            return URLQueryItem(name: Api.longitudeKey,
-                                value: "\(lon)")
-        }
-
-        var unitsQueryItem: URLQueryItem {
-            return URLQueryItem(name: Api.unitsKey,
-                                value: Api.unitsValue)
-        }
-        return request(type: type,
-                endpoint: forEndPoint,
-                method: .GET,
-                queryItems: [latitudeQueryItem,
-                             longitudeQueryItem,
-                             accessKeyQueryItem,
-                             unitsQueryItem])
+    func getTodayWeather<T:Codable>(weatherRequest: WeatherRequest) -> Future<T, Error> {
+        let endPointConfiguration = Endpoint.today(requestObject: weatherRequest)
+        return request(type: type, endPointConfiguration: endPointConfiguration)
     }
 }
 
